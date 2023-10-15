@@ -2,10 +2,26 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!-- JSTL 에서 반복문을 사용하기 위해 core 라이브러리 선언 -->
-
 <html>
 	<head>
 		<title>책 목록</title>
+		<style type="text/css">
+			table, td, th {
+				border : 1px solid black;
+				border-collapse : collapse;
+			}
+			thead td{
+				text-align: center;
+				padding : 5px;
+			}
+			tbody td {
+				padding : 5px;
+				text-align: center;
+			}
+			tbody td.price{
+				text-align: right;
+			}
+		</style>
 	</head>
 	<body>	
 		<h1>책 목록</h1>
@@ -18,7 +34,12 @@
 		        <input type="submit" value="검색" />
 		    </form>			
 		</p>
-		<table>
+		<table id="listTable">
+			<colgroup>
+				<col width="*">
+				<col width="20%">
+				<col width="20%">
+			</colgroup>
 			<thead>
 				<tr>
 					<td>제목</td>
@@ -36,7 +57,7 @@
 						</a>
 					</td>
 					<td>${row.category}</td>
-					<td><fmt:formatNumber type="number" maxFractionDigits="3" value="${row.price}" /></td>
+					<td class="price"><fmt:formatNumber type="number" maxFractionDigits="3" value="${row.price}" /></td>
 				</tr>
 			</c:forEach>
 			
