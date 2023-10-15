@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	
+	<!-- dataSource 설정하기 : 데이터베이스에 접속하기 위한 '외부 연동 관련'정보를 설정한다. -->
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="com.mariadb.jdbc.Driver" />
+		<property name="url"
+			      value="jdbc:mariadb://127.0.0.1:3306/bookhub?serverTimezone=UTC&amp;useSSL=false&amp;useUnicode=true&amp;characterEncoding=UTF-8" />
+			      <!--  
+			      	serverTimezone=UTC : 데이터베이스 기준 시간 = UTC 
+			      	useSSL=false : 보안접속 사용안함
+			      	useUnicode=true : 유니코드 사용
+			      	characterEncoding=UTF-8 : UTF-8 인코딩
+			      -->
+		<property name="username" value="bookhub_user" />
+		<property name="password" value="bookHub" />
+	</bean>
+	
+	<!-- sqlSessionFactory : 데이터베이스와 연결을 맺고 끊어질 때까지의 라이프사이클을 관리하는 sqlSessison 객체를 만든다. -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- sqlSessionFactory 의 프로퍼티는 dataSource 와 mapperLocations(매퍼파일 위치 지정) 2개 -->
+		<property name="dataSource" ref="sdataSource" />
+		<property name="mapperLocations" value="classpath:/sqlmap/**/*_SQL.xml" />
+	</bean>
+	<!-- sqlSessionTemplate : 데이터베이스에 개별적 쿼리를 실행시키는 객체  -->
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+		<!-- sqlSessionFactory : sqlSessionTemplate 빈의 생성자(constructor).
+								 그러므로 sqlSession 객체가 가지고 있는 dataSource와  mapperLocations 정보를 알 수 있게 된다.  -->
+		<constructor-arg index="0" ref="sqlSessionFactory" /> 
+	</bean>		
+</beans>

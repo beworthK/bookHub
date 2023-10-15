@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE  mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="book"> <!-- 쿼리 여러개일 때 namespace를 분리하는 역할 -->
+
+
+	<select id="select_list" parameterType="hashMap" resultType="hashMap">
+	    SELECT
+	    	book_id
+	    	, title
+	    	, category
+	    	, price
+	    	, insert_date
+	    FROM book
+	    WHERE 1 = 1 <!-- 1=1은 늘 참이므로 조건이 2개 이상일 경우, 두번째가 and 를 사용하는데 이걸 매번 구분하기 번거로우므로 사용 -->
+	    <!-- 마이바티스 if(조건문) 에 의해 변경되므로 동적 쿼리 -->
+	    <if test="keyword != null and keyword != ''">
+	      AND ( title LIKE CONCAT('%', #{keyword}, '%') 
+	      		OR category LIKE CONCAT('%', #{keyword}, '%') )
+	    </if>
+	    ORDER BY insert_date DESC
+	</select>	
+
+	<!-- 책 상세 페이지 -->
+	<!-- resultType : 쿼리 실행 후, 반환값을 담을 컨테이너 타입 -->
+	<select id="select_detail" parameterType="hashMap" resultType="hashMap">
+		SELECT
+			title
+			, category
+			, price
+			, insert_date
+		FROM book
+		WHERE book_id = #{bookId}			
+	</select>
+
+	<!-- 책 정보 등록 -->
+	<!-- useGeneratedKeys=true : 쿼리 실행 후, 생성된 PK를 파라미터 객체의 keyProperty 속성에 넣어준다 -->
+	<insert id="insert" parameterType="hashMap" useGeneratedKeys="true" keyProperty="book_id">		
+	    INSERT INTO book (
+	    	title
+	    	, category
+	    	, price 
+	    ) VALUES (
+	    	#{title}
+	    	, #{category}
+	    	, #{price}
+	    )
+	</insert>
+
+	<!-- 책 정보 수정 -->
+	<update id="update" parameterType="hashMap">
+		UPDATE book 
+		SET
+			title = #{title}
+		 	, category = #{category}
+		 	, price = #{price}
+		WHERE book_id = #{bookId}
+	</update>
+
+	<!-- 책 정보 삭제 -->	
+	<delete id="delete" parameterType="hashMap">
+		DELETE FROM book
+		WHERE book_id = #{bookId}
+	</delete>
+	
+
+</mapper>
